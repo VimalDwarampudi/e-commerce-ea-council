@@ -2,47 +2,53 @@
 
 ## Purpose
 
-This file guides the Chief Architect in selecting which agents to consult for a given request. Engaging unnecessary agents wastes cycles; missing a relevant agent risks blind spots.
+Guides the Chief Architect in selecting which of the 15 agents to consult for a given request. Engaging
+unnecessary agents wastes cycles; missing a relevant agent risks blind spots.
 
 ## Primary Routing Table
 
 | Request Topic | Domain Agents | Cross-Cut Agents |
 |---|---|---|
-| New application adoption | Product Management, Technology Infrastructure | Security, Risk & Compliance |
-| Application decommission | Product Management, Business Strategy | Risk & Compliance |
-| Cloud migration | Technology Infrastructure, Product Management | Security, Risk & Compliance |
-| New integration / API | Product Management, Technology Infrastructure | Security |
-| Business capability mapping | Business Strategy | — |
-| Strategy-to-technology alignment | Business Strategy, Product Management, Technology Infrastructure | — |
-| Data platform or data governance | Data Platform, Product Management | Security, Risk & Compliance |
-| AI/ML initiative | Data Platform, Product Management, Technology Infrastructure | Security, Risk & Compliance, Innovation Team |
-| Security architecture review | (all relevant domain agents) | Security (lead), Risk & Compliance |
-| Regulatory compliance assessment | Business Strategy, Product Management | Risk & Compliance (lead), Security |
-| Technology radar update | Product Management, Technology Infrastructure, Data Platform | — |
-| Reference architecture creation | All domain agents | Security, Risk & Compliance, Innovation Team |
-| Major platform replacement | All domain agents | All cross-cut agents |
-| Vendor / SaaS evaluation | Product Management, Technology Infrastructure | Security, Risk & Compliance |
-| Incident-driven architecture review | Technology Infrastructure, Product Management | Security (lead), Risk & Compliance, Innovation Team |
-| E-commerce search implementation | Search & Discovery, Data Platform, Customer Experience | Security |
-| Product catalog management | Product Management, Data Platform | Security |
-| Checkout process design | Checkout & Payments, Customer Experience | Security, Risk & Compliance |
-| Order creation system | Order Management | Security |
-| Order fulfillment integration | Fulfillment & Logistics, Order Management | Security |
-| Payment gateway integration | Checkout & Payments | Security, Risk & Compliance |
-| Receipt generation | Order Management, Risk & Compliance | Security |
-| Returns processing | Fulfillment & Logistics, Customer Experience, Order Management | Security |
+| New capability / business line (e.g. BOPIS, subscription commerce) | Business Strategy, + all directly implicated domains | Security, Risk & Compliance, Red Team |
+| Product catalog / taxonomy change | Catalog & Product Information, Search & Discovery | — |
+| New marketplace channel | Catalog & Product Information, Integration | Security, Risk & Compliance |
+| Search platform change / relevance tuning | Search & Discovery, Data & AI | — |
+| Checkout flow / cart redesign | Commerce & Checkout | Security (if payment-adjacent) |
+| Promotion / pricing logic | Commerce & Checkout, Application | — |
+| Order lifecycle / OMS design | Order Management, Integration | — |
+| Split-fulfillment / order orchestration | Order Management, Fulfillment & Logistics | — |
+| Payment processing / PSP integration | Payments | Security (always), Risk & Compliance |
+| Fraud / chargeback handling | Payments, Data & AI | Risk & Compliance |
+| POS / in-store systems | Omnichannel & Store Systems | Security |
+| BOPIS / ship-from-store / endless aisle | Omnichannel & Store Systems, Order Management, Fulfillment & Logistics | Security, Risk & Compliance |
+| Store network design | Omnichannel & Store Systems, Technology & Infrastructure | Security (always) |
+| Inventory / WMS design | Fulfillment & Logistics, Integration | — |
+| Shipping / carrier integration | Fulfillment & Logistics, Integration | — |
+| Returns processing | Fulfillment & Logistics | Risk & Compliance (if fraud pattern) |
+| New application / vendor / SaaS adoption | Application | Security (always), Risk & Compliance |
+| Application decommission | Application | Risk & Compliance |
+| New integration / API / event schema | Integration | Security |
+| Cloud migration / hosting change | Technology & Infrastructure, Application | Security, Risk & Compliance |
+| Peak-event (Black Friday) capacity review | Technology & Infrastructure, + all customer-facing domains touched | Security |
+| Personalization / recommendation initiative | Data & AI, Application | Security, Risk & Compliance, Red Team |
+| Customer identity / consent | Data & AI | Risk & Compliance (always) |
+| AI/ML model (any) | Data & AI | Security, Risk & Compliance, Red Team |
+| Security architecture review | (all directly implicated domains) | Security (lead), Risk & Compliance |
+| Regulatory / compliance assessment (PCI, GDPR, CCPA) | (all directly implicated domains) | Risk & Compliance (lead), Security |
+| Cross-border data flow | Data & AI | Risk & Compliance (always) |
+| Incident-driven review | (implicated domains) | Security (lead), Risk & Compliance, Red Team |
 
 ## Routing Logic
 
 ```
 IF impact = Minor:
     → Consult 1–2 most relevant domain agents only
-    → Skip cross-cut agents unless topic is security-sensitive
+    → Skip cross-cut agents unless topic is security- or payment-sensitive
 
 IF impact = Standard:
     → Consult all relevant domain agents
     → Always include Security
-    → Include Risk & Compliance if regulatory/risk keywords present
+    → Include Risk & Compliance if regulatory/data/fraud keywords present
 
 IF impact = Major:
     → Consult all relevant domain agents
@@ -50,7 +56,7 @@ IF impact = Major:
     → Consider Red Team if proposal is novel or high-stakes
 
 IF impact = Critical:
-    → Engage full council (all domain + all cross-cut agents)
+    → Engage full council (all 12 domain + all 3 cross-cut agents)
     → Red Team is mandatory
     → Human sponsor review is mandatory before finalizing
 ```
@@ -58,91 +64,29 @@ IF impact = Critical:
 ## Keyword Signals for Cross-Cut Agents
 
 ### Always include Security if request mentions:
-- authentication, authorization, identity, IAM, SSO, OAuth
-- data encryption, key management, TLS/HTTPS
-- external-facing systems, public APIs, internet exposure
-- cloud egress, network perimeter, firewall
-- personal data, PII, sensitive data classification
-- zero-trust, micro-segmentation
-- SaaS onboarding, third-party access
+- cardholder data, PAN, CVV, tokenization, PCI-DSS, PSP
+- authentication, authorization, IAM, SSO, API keys
+- external-facing systems, public APIs, marketplace/partner integration
+- store network, POS, guest WiFi, network segmentation
+- PII, customer data exposure
 
 ### Always include Risk & Compliance if request mentions:
-- GDPR, NIS2, SOX, ISO 27001, DORA, PCI-DSS
-- data residency, data sovereignty, cross-border transfer
-- audit trail, logging, regulatory reporting
+- GDPR, CCPA, consumer protection, data residency, cross-border transfer
+- consent, data deletion request, retention
+- fraud (return fraud, payment fraud, chargeback thresholds)
 - vendor risk, third-party dependency
-- business continuity, disaster recovery
-- risk appetite, tolerance, waiver, exception
+- risk appetite, waiver, exception
 
-### Always include Business Strategy if request mentions:
-- business strategy, market analysis, competitive positioning
-- capability mapping, value streams, business case
-- strategic planning, roadmap alignment, KPI definition
-
-### Always include Product Management if request mentions:
-- product development, feature prioritization, roadmap
-- catalog management, product lifecycle, A/B testing
-- marketplace, vendor products, product analytics
-
-### Always include Search & Discovery if request mentions:
-- search engine, product search, query processing
-- recommendations, discovery algorithms, relevance
-- faceted search, filtering, personalization in search
-
-### Always include Checkout & Payments if request mentions:
-- checkout flow, payment processing, fraud detection
-- PCI compliance, payment gateways, transaction security
-- cart management, payment methods, BNPL
-
-### Always include Order Management if request mentions:
-- order creation, order status, order lifecycle
-- order orchestration, inventory allocation, order tracking
-- SLA management, order analytics
-
-### Always include Fulfillment & Logistics if request mentions:
-- order fulfillment, supply chain, delivery optimization
-- warehouse management, logistics, last-mile delivery
-- inventory management, shipping, returns processing
-
-### Always include Customer Experience if request mentions:
-- UX, UI, user experience, customer journey, wireframing
-- personalization, recommendation engine, A/B testing
-- accessibility, WCAG, inclusive design
-- omnichannel, cross-device experience
-- voice commerce, AR/VR shopping, PWA
-
-### Always include Data Platform if request mentions:
-- data architecture, data warehouse, data lake
-- analytics, reporting, BI, data governance
-- AI/ML, machine learning, data science
-- ETL/ELT, data pipelines, data quality
-
-### Always include Technology Infrastructure if request mentions:
-- cloud infrastructure, DevOps, CI/CD
-- scalability, performance, high availability
-- hosting, containers, serverless, microservices
-
-### Always include Security if request mentions:
-- authentication, authorization, identity, IAM, SSO, OAuth
-- data encryption, key management, TLS/HTTPS
-- external-facing systems, public APIs, internet exposure
-- cloud egress, network perimeter, firewall
-- personal data, PII, sensitive data classification
-- zero-trust, micro-segmentation
-- SaaS onboarding, third-party access
-
-### Always include Innovation Team if request mentions:
-- new AI system or autonomous agent
-- emerging technology, innovation, disruptive tech
+### Always include Red Team if request mentions:
+- new capability with no existing reference architecture in `knowledge/shared/reference-architectures/`
+- peak-event (Black Friday/Cyber Monday) readiness for a new or changed system
 - irreversible architectural change
-- single point of failure in critical path
-- "we're confident this is safe" (flag groupthink)
-- novel architecture pattern not in reference architectures
-- experimental features, beta testing, MVP
+- single point of failure in checkout, payments, or store network
+- "we're confident this is safe" or similar (flag groupthink)
 
 ## Ambiguous Requests
 
 If the request topic is unclear:
-1. Ask the requester one clarifying question (topic + impact level)
-2. Make a provisional routing decision and state it
-3. Adjust routing if new information changes the scope
+1. Ask the requester one clarifying question (topic + impact level).
+2. Make a provisional routing decision and state it.
+3. Adjust routing if new information changes the scope.

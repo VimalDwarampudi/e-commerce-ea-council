@@ -1,19 +1,10 @@
-# ADR Register
+# Architecture Decision Record Register
 
-All Architecture Decision Records produced by the EA Council, in reverse chronological order.
+ADRs produced by the Retail EA Council land here, appended in order, using the template at
+`knowledge/shared/standards/adr-template.md`. Numbered sequentially: `ADR-0001`, `ADR-0002`, ...
 
-| ADR | Title | Status | Impact | Date | Key Decision |
-|---|---|---|---|---|---|
-| — | *No ADRs yet. The council is ready to produce its first decision.* | — | — | — | — |
+No decisions recorded yet.
 
-## Status Legend
-- **PROPOSED** — Under deliberation; not yet approved
-- **ACCEPTED** — Approved by council (+ human sponsor if Critical)
-- **REJECTED** — Reviewed and intentionally not adopted
-- **SUPERSEDED** — Replaced by a newer ADR (note successor)
-- **DEPRECATED** — No longer relevant; retained for historical record
+---
 
-## Naming Convention
-`ADR-{YYYY}-{NNN}-{kebab-case-short-title}.md`
-
-Files stored in: `/outputs/adr/`
+<!-- New ADRs are appended below this line -->
