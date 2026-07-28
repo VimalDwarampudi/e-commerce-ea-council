@@ -5,6 +5,62 @@ native **Claude Code** project: a Chief Architect orchestrator (`CLAUDE.md`) plu
 (`.claude/agents/`), backed by an **OKF (Open Knowledge Format) bundle** of policies, principles,
 guidelines, examples, tech radar entries, and reference architectures — navigated via `SKILL.md`.
 
+## Architecture
+
+```
+                        ┌─────────────────────────────────┐
+                        │   Chief Architect (CLAUDE.md)    │
+                        │          Orchestrator            │
+                        │  triage · routing · synthesis ·  │
+                        │        ADR production            │
+                        └──────────┬───────────┬───────────┘
+                                   │           │
+                        Task tool  │           │  Task tool
+                                   │           │
+            ┌──────────────────────┴─┐   ┌─────┴───────────────────────┐
+            │   12 Domain Agents      │   │    3 Cross-Cut Agents        │
+            │      (Advisory)         │   │       (Governance)           │
+            ├──────────────────────────┤   ├───────────────────────────────┤
+            │ Business Strategy        │   │ Security Arch  — VETO         │
+            │ Catalog & Product Info   │   │ Risk & Compliance — ESCALATE  │
+            │ Search & Discovery       │   │ Red Team — CHALLENGE ONLY     │
+            │ Commerce & Checkout      │   └───────────────────────────────┘
+            │ Order Management         │
+            │ Payments                 │
+            │ Omnichannel & Store Sys. │
+            │ Fulfillment & Logistics  │
+            │ Application Architecture │
+            │ Integration Architecture │
+            │ Technology & Infra       │
+            │ Data & AI                │
+            └────────────┬─────────────┘
+                          │
+                          │  Grounding Protocol (SKILL.md)
+                          ▼
+            ┌───────────────────────────────────────────────┐
+            │       OKF Knowledge Bundle (knowledge/)         │
+            │  ┌────────────────────┐  ┌────────────────────┐│
+            │  │  Governance layer   │  │   Asset layer       ││
+            │  │  Principle · Policy │  │  Table · API ·      ││
+            │  │  Guideline · Example│  │  Metric              ││
+            │  │  (always present)   │  │  (sample placeholder)││
+            │  └────────────────────┘  └────────────────────┘│
+            │      + shared/: 12 enterprise principles,        │
+            │        tech radar, standards, reference archs    │
+            └───────────────────┬─────────────────────────────┘
+                                 │
+                                 ▼  deferred — see "Data Sources" in CLAUDE.md
+            ┌───────────────────────────────────────────────┐
+            │     Live systems: OMS · PIM · WMS · POS · PSP    │
+            │         not yet connected — manual for now       │
+            └───────────────────────────────────────────────┘
+```
+
+Each domain and cross-cut agent runs in the isolated context Claude Code gives a Task-tool subagent — they
+don't see each other's reasoning mid-deliberation, which is deliberate: it's what prevents one agent's
+framing from anchoring the rest, the same reason a human review board takes written positions before
+discussing them together.
+
 ## Quick start
 
 ```bash
